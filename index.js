@@ -1,12 +1,13 @@
 const express = require("express");
 const app = express();
+const { nanoid } = require("nanoid");
 
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-
-const favicon = require("serve-favicon");
 const { disconnect } = require("process");
 const { connect } = require("http2");
+
+const favicon = require("serve-favicon");
 
 const port = 3000;
 
@@ -20,10 +21,10 @@ app.get("/", (req, res) => {
 });
 
 // socket
-
 io.on("connection", (socket) => {
+    socket.username = `temp_${nanoid(4)}`;
     let connect = {
-        username: "temp",
+        username: `${socket.username}`,
         type: "connect",
     };
     connect.message = `${connect.username} has connected.`;
@@ -37,7 +38,7 @@ io.on("connection", (socket) => {
     });
     socket.on("disconnect", () => {
         let disconnect = {
-            username: "temp",
+            username: `${socket.username}`,
             type: "disconnect",
         };
         disconnect.message = `${disconnect.username} has disconnected.`;
