@@ -3,10 +3,32 @@ body {
     margin: 0;
     height: 100%;
     overflow: hidden;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 body {
     background-color: #000051;
 }
+
+/* MESSAGES */
+#message-container {
+    width: 30%;
+    margin: 0;
+}
+
+#messages {
+    margin: 0;
+    background-color: rgba(83, 75, 174, 0.5);
+    font-size: 1.25em;
+    color: #ffffff;
+    list-style: none;
+    width: 100%;
+}
+
+#messages > li {
+    padding: 5px;
+}
+
+/* FORM ON THE BOTTOM */
 #message-form {
     position: absolute;
     bottom: 0px;
