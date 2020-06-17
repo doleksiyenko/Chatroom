@@ -63,3 +63,11 @@ body {
 #send:hover {
     cursor: pointer;
 }
+
+#connect {
+    color: lightgreen;
+}
+
+#disconnect {
+    color: pink;
+}

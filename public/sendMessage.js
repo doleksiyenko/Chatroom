@@ -15,14 +15,17 @@ sendButton.onclick = (e) => {
 };
 
 socket.on("message", (message) => {
+    // show a regular message on the screen
     newList = document.createElement("li");
     newList.textContent = message;
     messageList.appendChild(newList);
 });
 
-socket.on("connected", (message) => {
-    console.log("connected");
-    newList = document.createElement("li");
-    newList.textContent = message;
-    messageList.appendChild(newList);
+socket.on("connectionFormed", (connectionReq) => {
+    // this response show a user connecting / disconnecting on the screen
+    const connectionDetails = JSON.parse(connectionReq);
+    newConnectionMessage = document.createElement("li");
+    newConnectionMessage.textContent = connectionDetails.message;
+    newConnectionMessage.setAttribute("id", connectionDetails.type);
+    messageList.appendChild(newConnectionMessage);
 });

@@ -5,6 +5,8 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
 const favicon = require("serve-favicon");
+const { disconnect } = require("process");
+const { connect } = require("http2");
 
 const port = 3000;
 
@@ -18,15 +20,29 @@ app.get("/", (req, res) => {
 });
 
 // socket
+
 io.on("connection", (socket) => {
+    let connect = {
+        username: "temp",
+        type: "connect",
+    };
+    connect.message = `${connect.username} has connected.`;
+
     console.log("A user connected");
-    io.emit("message", "A user has connected.");
+    // create an item for users showing that a user has connected
+    io.emit("connectionFormed", JSON.stringify(connect));
+
     socket.on("message", (message) => {
         io.emit("message", message);
     });
     socket.on("disconnect", () => {
+        let disconnect = {
+            username: "temp",
+            type: "disconnect",
+        };
+        disconnect.message = `${disconnect.username} has disconnected.`;
         console.log("The user disconnected.");
-        io.emit("message", "A user has disconnected.");
+        io.emit("connectionFormed", JSON.stringify(disconnect));
     });
 });
 
