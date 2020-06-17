@@ -19,12 +19,14 @@ app.get("/", (req, res) => {
 
 // socket
 io.on("connection", (socket) => {
-    console.log("A user connected.");
+    console.log("A user connected");
+    io.emit("message", "A user has connected.");
     socket.on("message", (message) => {
         io.emit("message", message);
     });
     socket.on("disconnect", () => {
         console.log("The user disconnected.");
+        io.emit("message", "A user has disconnected.");
     });
 });
 
