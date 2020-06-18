@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const app = express();
 const { nanoid } = require("nanoid");
 
@@ -8,19 +9,21 @@ const { disconnect } = require("process");
 const { connect } = require("http2");
 
 const favicon = require("serve-favicon");
-
 const port = 3000;
 
-// show the favicon
-app.use(favicon(__dirname + "/images/favicon.svg"));
-app.use(express.static("public"));
+// load in the routes
+const roomRouter = require("./routers/room");
+const welcomeRouter = require("./routers/welcome");
+// show the favicon, use static files
+app.use(express.static(path.join(__dirname, "/public")));
+app.use(favicon(path.join(__dirname, "favicon.svg")));
 
-// route
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/public/index.html");
-});
+// routes
+app.use("/", welcomeRouter);
+app.use("/room", roomRouter);
 
 // socket
+let usersOnline = [];
 io.on("connection", (socket) => {
     socket.username = `temp_${nanoid(4)}`;
     let connect = {
