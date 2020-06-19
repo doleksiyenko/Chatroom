@@ -1,10 +1,12 @@
 const express = require("express");
+const ejs = require("ejs");
 const path = require("path");
-const app = express();
 const { nanoid } = require("nanoid");
 
+const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
+
 const { disconnect } = require("process");
 const { connect } = require("http2");
 
@@ -14,6 +16,9 @@ const port = 3000;
 // load in the routes
 const roomRouter = require("./routers/room");
 const welcomeRouter = require("./routers/welcome");
+
+// set view engine (ejs)
+app.set("view engine", "ejs");
 // show the favicon, use static files
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(favicon(path.join(__dirname, "favicon.svg")));
