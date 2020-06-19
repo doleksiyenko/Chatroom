@@ -11,11 +11,7 @@ const { disconnect } = require("process");
 const { connect } = require("http2");
 
 const favicon = require("serve-favicon");
-const port = 3000;
-
-// load in the routes
-const roomRouter = require("./routers/room");
-const welcomeRouter = require("./routers/welcome");
+const port = process.env.PORT || 3000;
 
 // set view engine (ejs)
 app.set("view engine", "ejs");
@@ -23,27 +19,30 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(favicon(path.join(__dirname, "favicon.svg")));
 
-// routes
-app.use("/", welcomeRouter);
-app.use("/room", roomRouter);
-
 // socket
-let usersOnline = [];
 io.on("connection", (socket) => {
-    socket.username = `temp_${nanoid(4)}`;
-    let connect = {
-        username: `${socket.username}`,
+    socket.username = `user-${nanoid(4)}`;
+    let user = {
+        name: `${socket.username}`,
         type: "connect",
     };
-    connect.message = `${connect.username} has connected.`;
+    user.message = `${user.name} has connected.`;
 
-    console.log("A user connected");
-    // create an item for users showing that a user has connected
-    io.emit("connectionFormed", JSON.stringify(connect));
+    socket.emit("connectionFormed", JSON.stringify(user));
 
     socket.on("message", (message) => {
-        io.emit("message", message);
+        io.to(user.roomId).emit("message", message, user.name);
     });
+    socket.on("joined", (roomId) => {
+        user.roomId = roomId;
+        // socket.broadcast.to(roomId);
+        socket.join(`${roomId}`);
+        socket.broadcast
+            .to(`${roomId}`)
+            .emit("connectionFormed", JSON.stringify(user));
+        console.log(`${socket.username} has joined ${roomId}`);
+    });
+
     socket.on("disconnect", () => {
         let disconnect = {
             username: `${socket.username}`,
@@ -51,8 +50,18 @@ io.on("connection", (socket) => {
         };
         disconnect.message = `${disconnect.username} has disconnected.`;
         console.log("The user disconnected.");
+        socket.leave(user.roomId);
         io.emit("connectionFormed", JSON.stringify(disconnect));
     });
+});
+
+// routes
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "/public/html/welcome.html"));
+});
+
+app.get("/room", (req, res) => {
+    res.sendFile(path.join(__dirname, "/public/html/room.html"));
 });
 
 http.listen(port, () => {

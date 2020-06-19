@@ -1,7 +1,14 @@
 const sendButton = document.getElementById("send");
 const messageBox = document.getElementById("message-box");
 const messageList = document.getElementById("messages");
+
 let socket = io();
+
+// when the socket is formed, broadcast to the room
+const urlParams = new URLSearchParams(window.location.search);
+let roomId = urlParams.get("id");
+
+socket.emit("joined", roomId);
 
 sendButton.onclick = (e) => {
     e.preventDefault();
@@ -14,10 +21,10 @@ sendButton.onclick = (e) => {
     return false;
 };
 
-socket.on("message", (message) => {
+socket.on("message", (message, user) => {
     // show a regular message on the screen
     newList = document.createElement("li");
-    newList.textContent = message;
+    newList.textContent = user + ": " + message;
     messageList.appendChild(newList);
 });
 

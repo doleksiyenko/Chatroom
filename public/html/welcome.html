@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chatroom - Welcome</title>
+        <link rel="stylesheet" href="../css/welcomePage.css" type="text/css" />
+    </head>
+    <body>
+        <div class="section">
+            <label for="create-room"
+                >Join/Create A Room by Name (RoomID):</label
+            >
+            <form action="/room/" method="GET">
+                <input
+                    placeholder="RoomID"
+                    name="id"
+                    autocomplete="off"
+                    required
+                />
+                <button type="submit">Join/Create Room</button>
+                <button>Create Private Room (random 10 digit ID)</button>
+            </form>
+        </div>
+        <div class="section">
+            <label for="room-list">Join An Existing Room:</label>
+            <form>
+                <button>Explore Existing Rooms</button>
+            </form>
+        </div>
+        <script src="../js/welcome.js"></script>
+    </body>
+</html>
